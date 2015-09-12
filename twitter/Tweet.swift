@@ -13,11 +13,11 @@ class Tweet: NSObject {
     var text: String?
     var createdAtString: String?
     var createdAt: NSDate?
-    var timeSince: NSString?
+    var timeSinceString: String?
     
-    class func tweetTimeStampAsString(timestamp: NSDate) -> NSString {
+    class func tweetTimeStampAsString(timestamp: NSDate) -> String {
         var ti = -Int(timestamp.timeIntervalSinceNow)
-        var timeAsString: NSString?
+        var timeAsString: String?
         
         if ti < 60 {
             timeAsString = "\(ti)s"
