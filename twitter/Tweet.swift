@@ -13,6 +13,26 @@ class Tweet: NSObject {
     var text: String?
     var createdAtString: String?
     var createdAt: NSDate?
+    var timeSince: NSString?
+    
+    class func tweetTimeStampAsString(timestamp: NSDate) -> NSString {
+        var ti = -Int(timestamp.timeIntervalSinceNow)
+        var timeAsString: NSString?
+        
+        if ti < 60 {
+            timeAsString = "\(ti)s"
+        } else if ti < 3600 {
+            var mins = ti / 60
+            timeAsString = "\(mins)m"
+        } else if ti < 86400 {
+            var hours = (ti / 60) / 60
+            timeAsString = "\(hours)h"
+        } else {
+            var days = ((ti / 60) / 60) / 24
+            timeAsString = "\(days)d"
+        }
+        return timeAsString!
+    }
 
     init(dictionary: NSDictionary) {
         user = User(dictionary: dictionary["user"] as! NSDictionary)
@@ -23,7 +43,12 @@ class Tweet: NSObject {
         
         formatter.dateFormat = "EEE MMM d HH:mm:ss Z y"
         createdAt = formatter.dateFromString(createdAtString!)
+        timeSince = Tweet.tweetTimeStampAsString(createdAt!)
+        println("Tweet was Created At: \(createdAt!)")
+        println("Tweet was created \(Tweet.tweetTimeStampAsString(createdAt!)) ago")
     }
+    
+
     
     class func tweetsWithArray(array: [NSDictionary]) -> [Tweet] {
         var tweets = [Tweet]()

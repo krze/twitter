@@ -24,6 +24,7 @@ class TweetCell: UITableViewCell {
             avatarImage.setImageWithURL(url)
             displayNameLabel.text = tweet.user?.name
             tweetBodyLabel.text = tweet.text
+            timeAgoLabel.text = tweet.timeSince as String!
         }
     }
     
