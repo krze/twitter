@@ -16,6 +16,7 @@ class TweetCell: UITableViewCell {
     @IBOutlet weak var tweetBodyLabel: UILabel!
     @IBOutlet weak var timeAgoLabel: UILabel!
     
+    
     var tweet: Tweet! {
         didSet {
             var url = NSURL(string: tweet.user!.profileImageUrl!)

@@ -43,7 +43,7 @@ class Tweet: NSObject {
         
         formatter.dateFormat = "EEE MMM d HH:mm:ss Z y"
         createdAt = formatter.dateFromString(createdAtString!)
-        timeSince = Tweet.tweetTimeStampAsString(createdAt!)
+        timeSinceString = Tweet.tweetTimeStampAsString(createdAt!)
         println("Tweet was Created At: \(createdAt!)")
         println("Tweet was created \(Tweet.tweetTimeStampAsString(createdAt!)) ago")
     }
