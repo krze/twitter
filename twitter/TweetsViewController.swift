@@ -8,10 +8,11 @@
 
 import UIKit
 
-class TweetsViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
+class TweetsViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UIPopoverPresentationControllerDelegate {
     var tweets: [Tweet]!
 
     @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var newTweetButton: UIButton!
     
     var refreshControl: UIRefreshControl!
     
@@ -40,7 +41,7 @@ class TweetsViewController: UIViewController, UITableViewDataSource, UITableView
         // Pull to Refresh
         self.refreshControl = UIRefreshControl()
         //        self.refreshControl.attributedTitle = NSAttributedString(string: "Pull to refresh", attributes: [NSFontAttributeName: UIFont(name: "Avenir", size:12)!])
-        self.refreshControl.tintColor = UIColor.orangeColor()
+//        self.refreshControl.tintColor = UIColor.orangeColor()
         self.refreshControl.addTarget(self, action: "refresh:", forControlEvents: UIControlEvents.ValueChanged)
         self.tableView.addSubview(refreshControl)
         
@@ -54,6 +55,10 @@ class TweetsViewController: UIViewController, UITableViewDataSource, UITableView
         refreshControl?.endRefreshing()
     }
     
+    func newTweet() {
+            self.performSegueWithIdentifier("createNewTweetSegue", sender: self)
+        }
+    
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if tweets != nil {
             println("Got tweets!")
@@ -64,6 +69,7 @@ class TweetsViewController: UIViewController, UITableViewDataSource, UITableView
         }
     }
     
+    
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier("TweetCell", forIndexPath: indexPath) as! TweetCell
             
@@ -72,18 +78,33 @@ class TweetsViewController: UIViewController, UITableViewDataSource, UITableView
         return cell
     }
     
+    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        tableView.deselectRowAtIndexPath(indexPath, animated: true)
+        let cell = tableView.cellForRowAtIndexPath(indexPath) as! TweetCell
+        
+        // Debugging
+        println(cell.tweet)
+        
+        self.performSegueWithIdentifier("tweetDetailViewSegue", sender: cell)
+    }
+    
     @IBAction func onLogout(sender: AnyObject) {
         User.currentUser?.logout()
     }
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
+    
+    @IBAction func onNewTweet(sender: AnyObject) {
+        newTweet()
     }
-    */
+
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        if (segue.identifier == "tweetDetailViewSegue") {
+            var detailViewController = segue.destinationViewController as! TweetDetailViewController
+            var cell = sender as! UITableViewCell
+            var indexPath = tableView.indexPathForCell(cell)!
+            var tweet = tweets[indexPath.row]
+            
+            detailViewController.tweet = tweet
+        }
+    }
 
 }

@@ -42,8 +42,6 @@ class TwitterClient: BDBOAuth1RequestOperationManager {
     
     func homeTimelineWithParams(params: NSDictionary?, completion: (tweets: [Tweet]?, error: NSError?) -> ()) {
         GET("1.1/statuses/home_timeline.json", parameters: params, success: { (operation: AFHTTPRequestOperation!, response: AnyObject!) -> Void in
-            //                println("home timeline: \(response)")
-            
             var tweets = Tweet.tweetsWithArray(response as! [NSDictionary])
             completion(tweets: tweets, error: nil)
         }, failure: { (operation: AFHTTPRequestOperation!, error: NSError!) -> Void in
@@ -70,7 +68,45 @@ class TwitterClient: BDBOAuth1RequestOperationManager {
             println("Failed to receive access token: \(error)")
             self.loginCompletion?(user: nil, error: error)
         }
-
+    }
+    
+    func createNewTweet(params: NSDictionary, completion: (tweet: Tweet?, error: NSError?) -> ()) {
+        POST("/1.1/statuses/update.json", parameters: params, success: { (operation: AFHTTPRequestOperation!, response: AnyObject!) -> Void in
+            var tweet = Tweet(dictionary: response as! NSDictionary)
+            println("Created tweet with body:\n\(tweet.text)")
+            completion(tweet: tweet, error: nil)
+            }) { (operation: AFHTTPRequestOperation!, error: NSError!) -> Void in
+            completion(tweet: nil, error: error)
+            println("Did not create tweet. Reason: \(error)")
+        }
         
     }
+    
+    func replyToTweet() {
+        println("reply")
+    }
+    
+    func favTweet(params: NSDictionary, completion: (error: NSError?) -> ()) {
+        POST("/1.1/favorites/create.json", parameters: params, success: { (operation: AFHTTPRequestOperation!, response: AnyObject!) -> Void in
+            println("Successfully favorited")
+            completion(error: nil)
+            }) { (operation: AFHTTPRequestOperation!, error: NSError!) -> Void in
+                completion(error: error)
+                println("Did not fav tweet. Reason: \(error)")
+        }
+    }
+    
+    func retweetTweet(id: String!, params: NSDictionary?, completion: (error: NSError?) -> ()) {
+        POST("/1.1/statuses/retweet/\(id).json", parameters: params, success: { (operation: AFHTTPRequestOperation!, response: AnyObject!) -> Void in
+            println("Successfully Retweeted")
+            completion(error: nil)
+            }) { (operation: AFHTTPRequestOperation!, error: NSError!) -> Void in
+                completion(error: error)
+                println("Did not create tweet. Reason: \(error)")
+        }
+    }
+    
+    ///1.1/favorites/create.json?
+    
+    
 }

@@ -14,6 +14,7 @@ class Tweet: NSObject {
     var createdAtString: String?
     var createdAt: NSDate?
     var timeSinceString: String?
+    var id: String?
     
     class func tweetTimeStampAsString(timestamp: NSDate) -> String {
         var ti = -Int(timestamp.timeIntervalSinceNow)
@@ -38,6 +39,7 @@ class Tweet: NSObject {
         user = User(dictionary: dictionary["user"] as! NSDictionary)
         text = dictionary["text"] as? String
         createdAtString = dictionary["created_at"] as? String
+        id = dictionary["id_str"] as? String
         
         var formatter = NSDateFormatter()
         
