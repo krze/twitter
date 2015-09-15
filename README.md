@@ -28,4 +28,4 @@ Time spent: `15 hr`
 
 ### Walkthrough
 
-![Video Walkthrough](...)
+![Video Walkthrough](https://github.com/krze/twitter/raw/master/tweet.gif)
