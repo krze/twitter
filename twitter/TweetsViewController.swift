@@ -8,13 +8,15 @@
 
 import UIKit
 
-class TweetsViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UIPopoverPresentationControllerDelegate {
+class TweetsViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UIPopoverPresentationControllerDelegate, TweetCellDelegate {
     var tweets: [Tweet]!
 
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var newTweetButton: UIButton!
     
     var refreshControl: UIRefreshControl!
+    
+    var repliedFromTimeline = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -29,6 +31,12 @@ class TweetsViewController: UIViewController, UITableViewDataSource, UITableView
         tableView.estimatedRowHeight = 120
         
         // Do any additional setup after loading the view.
+//        refresh(self)
+    }
+    
+    override func viewDidAppear(animated: Bool) {
+        super.viewDidAppear(true)
+        
         refresh(self)
     }
 
@@ -74,6 +82,7 @@ class TweetsViewController: UIViewController, UITableViewDataSource, UITableView
         let cell = tableView.dequeueReusableCellWithIdentifier("TweetCell", forIndexPath: indexPath) as! TweetCell
             
         cell.tweet = tweets[indexPath.row]
+        cell.delegate = self
         
         return cell
     }
@@ -81,12 +90,23 @@ class TweetsViewController: UIViewController, UITableViewDataSource, UITableView
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         tableView.deselectRowAtIndexPath(indexPath, animated: true)
         let cell = tableView.cellForRowAtIndexPath(indexPath) as! TweetCell
-        
-        // Debugging
-        println(cell.tweet)
-        
-        self.performSegueWithIdentifier("tweetDetailViewSegue", sender: cell)
+        println("Attempting to tap on cell")
+
+        tappedOnCell(cell, tappedReply: false)
     }
+    
+    
+    func tappedOnCell(cell: UITableViewCell, tappedReply: Bool){
+        let cell = cell
+        repliedFromTimeline = tappedReply
+        self.performSegueWithIdentifier("tweetDetailViewSegue", sender: cell)
+        println("Tapped on cell")
+    }
+    
+    func replyTo(cell: UITableViewCell) {
+        tappedOnCell(cell, tappedReply: true)
+    }
+    
     
     @IBAction func onLogout(sender: AnyObject) {
         User.currentUser?.logout()
@@ -104,6 +124,7 @@ class TweetsViewController: UIViewController, UITableViewDataSource, UITableView
             var tweet = tweets[indexPath.row]
             
             detailViewController.tweet = tweet
+            detailViewController.replyOnLoad = repliedFromTimeline
         }
     }
 

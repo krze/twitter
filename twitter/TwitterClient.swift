@@ -82,12 +82,9 @@ class TwitterClient: BDBOAuth1RequestOperationManager {
         
     }
     
-    func replyToTweet() {
-        println("reply")
-    }
-    
     func favTweet(params: NSDictionary, completion: (error: NSError?) -> ()) {
         POST("/1.1/favorites/create.json", parameters: params, success: { (operation: AFHTTPRequestOperation!, response: AnyObject!) -> Void in
+            println(response)
             println("Successfully favorited")
             completion(error: nil)
             }) { (operation: AFHTTPRequestOperation!, error: NSError!) -> Void in
@@ -98,6 +95,7 @@ class TwitterClient: BDBOAuth1RequestOperationManager {
     
     func retweetTweet(id: String!, params: NSDictionary?, completion: (error: NSError?) -> ()) {
         POST("/1.1/statuses/retweet/\(id).json", parameters: params, success: { (operation: AFHTTPRequestOperation!, response: AnyObject!) -> Void in
+            println(response)
             println("Successfully Retweeted")
             completion(error: nil)
             }) { (operation: AFHTTPRequestOperation!, error: NSError!) -> Void in

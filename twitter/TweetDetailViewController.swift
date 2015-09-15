@@ -25,6 +25,7 @@ class TweetDetailViewController: UIViewController {
     @IBOutlet weak var replyTextView: UITextView!
     
     var tweet: Tweet!
+    var replyOnLoad = false
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -45,7 +46,11 @@ class TweetDetailViewController: UIViewController {
         loadTweet()
         tweetBodyLabel.preferredMaxLayoutWidth = tweetBodyLabel.frame.size.width
         
-        replyView.hidden = true
+        if replyOnLoad {
+            self.reply()
+        } else {
+            replyView.hidden = true
+        }
     }
 
     override func didReceiveMemoryWarning() {
@@ -67,8 +72,6 @@ class TweetDetailViewController: UIViewController {
         replyView.hidden = false
         replyTextView.text = recipient
         replyTextView.becomeFirstResponder()
-        
-        TwitterClient.sharedInstance.replyToTweet()
     }
     
     func fav() {
@@ -108,6 +111,7 @@ class TweetDetailViewController: UIViewController {
         TwitterClient.sharedInstance.createNewTweet(["status": replyTextView.text, "in_reply_to_status_id": id], completion: { (tweet, error) -> () in
             if tweet != nil {
                 self.dismissViewControllerAnimated(true, completion: nil)
+                println("Replied to \(id)")
             }
             if error != nil {
                 println("error")

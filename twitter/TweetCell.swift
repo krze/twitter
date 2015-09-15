@@ -8,6 +8,10 @@
 
 import UIKit
 
+@objc protocol TweetCellDelegate {
+    optional func replyTo(cell: UITableViewCell)
+}
+
 class TweetCell: UITableViewCell {
 
     @IBOutlet weak var avatarImage: UIImageView!
@@ -15,8 +19,12 @@ class TweetCell: UITableViewCell {
     @IBOutlet weak var usernameLabel: UILabel!
     @IBOutlet weak var tweetBodyLabel: UILabel!
     @IBOutlet weak var timeAgoLabel: UILabel!
+    @IBOutlet weak var replyImage: UIImageView!
+    @IBOutlet weak var favImage: UIImageView!
+    @IBOutlet weak var retweetImage: UIImageView!
     
-    
+    var delegate: TweetCellDelegate?
+
     var tweet: Tweet! {
         didSet {
             var url = NSURL(string: tweet.user!.profileImageUrl!)
@@ -33,6 +41,17 @@ class TweetCell: UITableViewCell {
         super.awakeFromNib()
         // Initialization code
         
+        var reply = UITapGestureRecognizer(target: self, action: Selector("reply"))
+        var fav = UITapGestureRecognizer(target: self, action: Selector("fav"))
+        var retweet = UITapGestureRecognizer(target: self, action: Selector("retweet"))
+        
+        replyImage.image = UIImage(named: "reply_icon")
+        replyImage.addGestureRecognizer(reply)
+        favImage.image = UIImage(named: "fav_icon")
+        favImage.addGestureRecognizer(fav)
+        retweetImage.image = UIImage(named: "retweet_icon")
+        retweetImage.addGestureRecognizer(retweet)
+        
         tweetBodyLabel.preferredMaxLayoutWidth = tweetBodyLabel.frame.size.width
     }
     
@@ -45,6 +64,38 @@ class TweetCell: UITableViewCell {
         super.setSelected(selected, animated: animated)
 
         // Configure the view for the selected state
+    }
+    
+    func reply() {
+        if let delegate = self.delegate {
+            delegate.replyTo!(self)
+        }
+
+    }
+    
+    func fav() {
+        var id = tweet.id as String!
+        
+        TwitterClient.sharedInstance.favTweet(["id": id], completion: { (error) -> () in
+            if error != nil {
+                println(error)
+            } else {
+//                self.dismissViewControllerAnimated(true, completion: nil)
+            }
+        })
+        
+    }
+    
+    func retweet() {
+        var id = tweet.id as String!
+        
+        TwitterClient.sharedInstance.retweetTweet(id, params: nil, completion: { (error) -> () in
+            if error != nil {
+                println(error)
+            } else {
+//                self.dismissViewControllerAnimated(true, completion: nil)
+            }
+        })
     }
 
 }
