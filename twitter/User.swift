@@ -16,6 +16,10 @@ class User: NSObject {
     var name: String?
     var screenname: String?
     var profileImageUrl: String?
+    var bannerImageUrl: String?
+    var followerCount: Int?
+    var followingCount: Int?
+    var tweetCount: Int?
     var tagline: String?
     var dictionary: NSDictionary
     
@@ -24,6 +28,10 @@ class User: NSObject {
         name = dictionary["name"] as? String
         screenname = dictionary["screen_name"] as? String
         profileImageUrl = dictionary["profile_image_url"] as? String
+        bannerImageUrl = dictionary["profile_banner_url"] as? String
+        followerCount = dictionary["followers_count"] as? Int
+        followingCount = dictionary["friends_count"] as? Int
+        tweetCount = dictionary["statuses_count"] as? Int
         tagline = dictionary["description"] as? String
     }
     

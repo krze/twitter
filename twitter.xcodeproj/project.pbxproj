@@ -106,8 +106,8 @@
 			children = (
 				64F92AF01BA259100068CB17 /* ViewController.swift */,
 				64F40DE81BA5C66F004BD759 /* NewTweetViewController.swift */,
-				64F475951BA4A2B100B726B8 /* TweetsViewController.swift */,
 				64F40DEA1BA6049A004BD759 /* TweetDetailViewController.swift */,
+				64F475951BA4A2B100B726B8 /* TweetsViewController.swift */,
 			);
 			name = "View Controllers";
 			sourceTree = "<group>";

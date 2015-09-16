@@ -24,10 +24,23 @@ class TweetsViewController: UIViewController, UITableViewDataSource, UITableView
     var timelineContracted: CGPoint!
     var timelineExpanded: CGPoint!
     
+    
+    // Profile view Outlets
+    @IBOutlet weak var userHeaderImage: UIImageView!
+    @IBOutlet weak var userAvatarImage: UIImageView!
+    @IBOutlet weak var userUsername: UILabel!
+    @IBOutlet weak var userDisplayName: UILabel!
+    @IBOutlet weak var tweetCount: UILabel!
+    @IBOutlet weak var followingCount: UILabel!
+    @IBOutlet weak var followersCount: UILabel!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        println(User.currentUser?.dictionary)
+        
         setupRefreshControl()
+        setupProfile()
         
         println("Center on load is: \(timelineView.center)")
         timelineExpanded = CGPoint(x: 160.0, y: 284.0)
@@ -62,6 +75,27 @@ class TweetsViewController: UIViewController, UITableViewDataSource, UITableView
 //        self.refreshControl.tintColor = UIColor.orangeColor()
         self.refreshControl.addTarget(self, action: "refresh:", forControlEvents: UIControlEvents.ValueChanged)
         self.tableView.addSubview(refreshControl)
+        
+    }
+    
+    func setupProfile() {
+        var profileImageUrl = NSURL(string: User.currentUser!.profileImageUrl!)
+        var headerImageUrl = NSURL(string: "\(User.currentUser!.bannerImageUrl!)/300x100")
+        
+        userUsername.text = "@\(User.currentUser?.screenname as String!)"
+        userDisplayName.text = User.currentUser?.name
+        userAvatarImage.setImageWithURL(profileImageUrl)
+        userHeaderImage.setImageWithURL(headerImageUrl)
+        
+        if let tweetCountInt = User.currentUser?.tweetCount {
+            tweetCount.text = String(stringInterpolationSegment: tweetCountInt)
+        }
+        if let followersCountInt = User.currentUser?.followerCount {
+            followersCount.text = String(stringInterpolationSegment: followersCountInt)
+        }
+        if let followingCountInt = User.currentUser?.followingCount {
+            followingCount.text = String(stringInterpolationSegment: followingCountInt)
+        }
         
     }
     
