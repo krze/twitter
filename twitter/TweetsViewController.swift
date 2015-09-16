@@ -18,10 +18,20 @@ class TweetsViewController: UIViewController, UITableViewDataSource, UITableView
     
     var repliedFromTimeline = false
     
+    @IBOutlet weak var timelineView: UIView!
+    
+    var timelineOriginalCenter: CGPoint!
+    var timelineContracted: CGPoint!
+    var timelineExpanded: CGPoint!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         setupRefreshControl()
+        
+        println("Center on load is: \(timelineView.center)")
+        timelineExpanded = CGPoint(x: 160.0, y: 284.0)
+        timelineContracted = CGPoint(x: 368.0, y: 284.0)
         
         tableView.delegate = self
         tableView.dataSource = self
@@ -103,9 +113,30 @@ class TweetsViewController: UIViewController, UITableViewDataSource, UITableView
         println("Tapped on cell")
     }
     
+    func animateExpandTimeline() {
+        UIView.animateWithDuration(0.5, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 20.0, options: nil, animations: { () -> Void in
+            self.timelineView.center = self.timelineExpanded
+        }) { (Bool) -> Void in
+            println("It done")
+        }
+        
+        
+    }
+    
+    func animateContractTimeline() {
+        UIView.animateWithDuration(0.5, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 20.0, options: nil, animations: { () -> Void in
+            self.timelineView.center = self.timelineContracted
+            }) { (Bool) -> Void in
+                println("It done")
+        }
+        
+    }
+    
+    
     func replyTo(cell: UITableViewCell) {
         tappedOnCell(cell, tappedReply: true)
     }
+    
     
     
     @IBAction func onLogout(sender: AnyObject) {
@@ -114,6 +145,37 @@ class TweetsViewController: UIViewController, UITableViewDataSource, UITableView
     
     @IBAction func onNewTweet(sender: AnyObject) {
         newTweet()
+    }
+
+    
+    @IBAction func onPanView(sender: UIPanGestureRecognizer) {
+        var panGestureRecognizer = sender
+        var point = panGestureRecognizer.locationInView(view)
+        var velocity = panGestureRecognizer.velocityInView(view)
+        var translation = panGestureRecognizer.translationInView(view)
+        var contracting = Bool()
+        
+        if panGestureRecognizer.state == UIGestureRecognizerState.Began {
+            println("Gesture began at: \(point)")
+            timelineOriginalCenter = timelineView.center
+        } else if panGestureRecognizer.state == UIGestureRecognizerState.Changed {
+            println("Gesture changed at: \(point)")
+            timelineView.center = CGPoint(x: timelineOriginalCenter.x + translation.x, y: timelineOriginalCenter.y)
+            println("Current Tray Center Is: \(timelineView.center)")
+        } else if panGestureRecognizer.state == UIGestureRecognizerState.Ended {
+            println("Gesture ended at: \(point)")
+            
+            if velocity.x > 0 {
+                contracting = true
+            } else {
+                contracting = false
+            }
+            if contracting {
+                animateContractTimeline()
+            } else {
+                animateExpandTimeline()
+            }
+        }
     }
 
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
