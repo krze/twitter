@@ -21,6 +21,7 @@ class User: NSObject {
     var followingCount: Int?
     var tweetCount: Int?
     var tagline: String?
+    var id: String?
     var dictionary: NSDictionary
     
     init(dictionary: NSDictionary) {
@@ -33,6 +34,7 @@ class User: NSObject {
         followingCount = dictionary["friends_count"] as? Int
         tweetCount = dictionary["statuses_count"] as? Int
         tagline = dictionary["description"] as? String
+        id = dictionary["id_str"] as? String
     }
     
     func logout() {

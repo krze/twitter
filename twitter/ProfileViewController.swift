@@ -11,14 +11,18 @@ import UIKit
 class ProfileViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, TweetCellDelegate  {
     var tweets: [Tweet]!
     var repliedFromTimeline = false
+    var userID: String?
 
+    
     @IBOutlet weak var tableView: UITableView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.delegate = self
         tableView.dataSource = self
-        
+        // These two properties must be set in order to use auto layout and ensure the scroll bar appears at a sane size
+        tableView.rowHeight = UITableViewAutomaticDimension
+        tableView.estimatedRowHeight = 120
         
         refresh(self)
 
@@ -66,16 +70,23 @@ class ProfileViewController: UIViewController, UITableViewDataSource, UITableVie
     func tappedOnCell(cell: UITableViewCell, tappedReply: Bool){
         let cell = cell
         repliedFromTimeline = tappedReply
-        self.performSegueWithIdentifier("tweetDetailViewSegue", sender: cell)
+        self.performSegueWithIdentifier("tweetDetailViewFromProfileSegue", sender: cell)
         println("Tapped on cell")
     }
+    
     
     func replyTo(cell: UITableViewCell) {
         tappedOnCell(cell, tappedReply: true)
     }
     
+    func viewProfileId(id: String) {
+        
+    }
+    
     func refresh(sender:AnyObject) {
-        TwitterClient.sharedInstance.homeTimelineWithParams(nil, completion: { (tweets, error) -> () in
+        var id = userID as String!
+        
+        TwitterClient.sharedInstance.userTimelineWithParams(["user_id": id], completion: { (tweets, error) -> () in
             self.tweets = tweets
             self.tableView.reloadData()
         })

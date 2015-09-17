@@ -17,6 +17,7 @@ class TweetsViewController: UIViewController, UITableViewDataSource, UITableView
     var refreshControl: UIRefreshControl!
     
     var repliedFromTimeline = false
+    var tappedOnUsernameId = "nil"
     
     @IBOutlet weak var timelineView: UIView!
     
@@ -172,10 +173,16 @@ class TweetsViewController: UIViewController, UITableViewDataSource, UITableView
         
     }
     
+    func viewProfileId(id: String) {
+        println("Got ID from cell: \(id)")
+        tappedOnUsernameId = id
+        self.performSegueWithIdentifier("viewProfileSegue", sender: self)
+    }
     
     func replyTo(cell: UITableViewCell) {
         tappedOnCell(cell, tappedReply: true)
     }
+    
     
     @IBAction func onTapViewCurrentUserProfile(sender: AnyObject) {
         self.performSegueWithIdentifier("viewProfileSegue", sender: self)
@@ -228,6 +235,17 @@ class TweetsViewController: UIViewController, UITableViewDataSource, UITableView
             
             detailViewController.tweet = tweet
             detailViewController.replyOnLoad = repliedFromTimeline
+        } else if(segue.identifier == "viewProfileSegue") {
+            var detailViewController = segue.destinationViewController as! ProfileViewController
+            var selectedId = tappedOnUsernameId
+            
+            if tappedOnUsernameId == "nil" {
+                println("tappedOnUsernameId was nil")
+                detailViewController.userID = User.currentUser?.id
+            } else {
+                println("Segueing to id \(tappedOnUsernameId)")
+                detailViewController.userID = tappedOnUsernameId
+            }
         }
     }
 

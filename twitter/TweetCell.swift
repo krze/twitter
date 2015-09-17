@@ -10,6 +10,7 @@ import UIKit
 
 @objc protocol TweetCellDelegate {
     optional func replyTo(cell: UITableViewCell)
+    optional func viewProfileId(id: String)
 }
 
 class TweetCell: UITableViewCell {
@@ -24,6 +25,7 @@ class TweetCell: UITableViewCell {
     @IBOutlet weak var retweetImage: UIImageView!
     
     var delegate: TweetCellDelegate?
+    var tweetUserId: String?
 
     var tweet: Tweet! {
         didSet {
@@ -34,6 +36,7 @@ class TweetCell: UITableViewCell {
             displayNameLabel.text = tweet.user?.name
             tweetBodyLabel.text = tweet.text
             timeAgoLabel.text = tweet.timeSinceString
+            tweetUserId = tweet.user!.id
         }
     }
     
@@ -44,6 +47,7 @@ class TweetCell: UITableViewCell {
         var reply = UITapGestureRecognizer(target: self, action: Selector("reply"))
         var fav = UITapGestureRecognizer(target: self, action: Selector("fav"))
         var retweet = UITapGestureRecognizer(target: self, action: Selector("retweet"))
+        var viewProfile = UITapGestureRecognizer(target: self, action: Selector("viewProfile"))
         
         replyImage.image = UIImage(named: "reply_icon")
         replyImage.addGestureRecognizer(reply)
@@ -51,6 +55,9 @@ class TweetCell: UITableViewCell {
         favImage.addGestureRecognizer(fav)
         retweetImage.image = UIImage(named: "retweet_icon")
         retweetImage.addGestureRecognizer(retweet)
+        
+        avatarImage.addGestureRecognizer(viewProfile)
+        
         
         tweetBodyLabel.preferredMaxLayoutWidth = tweetBodyLabel.frame.size.width
     }
@@ -96,6 +103,13 @@ class TweetCell: UITableViewCell {
 //                self.dismissViewControllerAnimated(true, completion: nil)
             }
         })
+    }
+    
+    func viewProfile() {
+        println("Tapped on profile!!!")
+        if let delegate = self.delegate {
+            delegate.viewProfileId!(tweetUserId!)
+        }
     }
 
 }
