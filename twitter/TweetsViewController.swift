@@ -42,9 +42,10 @@ class TweetsViewController: UIViewController, UITableViewDataSource, UITableView
         setupRefreshControl()
         setupProfile()
         
-        println("Center on load is: \(timelineView.center)")
         timelineExpanded = CGPoint(x: 160.0, y: 284.0)
         timelineContracted = CGPoint(x: 368.0, y: 284.0)
+        
+//        animateExpandTimeline()
         
         tableView.delegate = self
         tableView.dataSource = self
@@ -148,21 +149,26 @@ class TweetsViewController: UIViewController, UITableViewDataSource, UITableView
     }
     
     func animateExpandTimeline() {
-        UIView.animateWithDuration(0.5, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 20.0, options: nil, animations: { () -> Void in
+//        UIView.animateWithDuration(0.5, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 10.0, options: nil, animations: { () -> Void in
+//            self.timelineView.center = self.timelineExpanded
+//        }) { (Bool) -> Void in
+//            println("It done")
+//        }
+        
+        UIView.animateWithDuration(0.5, animations: { () -> Void in
             self.timelineView.center = self.timelineExpanded
-        }) { (Bool) -> Void in
-            println("It done")
-        }
+        })
         
         
     }
     
     func animateContractTimeline() {
-        UIView.animateWithDuration(0.5, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 20.0, options: nil, animations: { () -> Void in
+        UIView.animateWithDuration(0.5, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 10.0, options: nil, animations: { () -> Void in
             self.timelineView.center = self.timelineContracted
             }) { (Bool) -> Void in
                 println("It done")
         }
+
         
     }
     
@@ -171,6 +177,9 @@ class TweetsViewController: UIViewController, UITableViewDataSource, UITableView
         tappedOnCell(cell, tappedReply: true)
     }
     
+    @IBAction func onTapViewCurrentUserProfile(sender: AnyObject) {
+        self.performSegueWithIdentifier("viewProfileSegue", sender: self)
+    }
     
     
     @IBAction func onLogout(sender: AnyObject) {
@@ -187,7 +196,6 @@ class TweetsViewController: UIViewController, UITableViewDataSource, UITableView
         var point = panGestureRecognizer.locationInView(view)
         var velocity = panGestureRecognizer.velocityInView(view)
         var translation = panGestureRecognizer.translationInView(view)
-        var contracting = Bool()
         
         if panGestureRecognizer.state == UIGestureRecognizerState.Began {
             println("Gesture began at: \(point)")
@@ -196,15 +204,14 @@ class TweetsViewController: UIViewController, UITableViewDataSource, UITableView
             println("Gesture changed at: \(point)")
             timelineView.center = CGPoint(x: timelineOriginalCenter.x + translation.x, y: timelineOriginalCenter.y)
             println("Current Tray Center Is: \(timelineView.center)")
+            
+            if timelineView.center.x < timelineExpanded.x {
+                timelineView.center = timelineExpanded
+            }
         } else if panGestureRecognizer.state == UIGestureRecognizerState.Ended {
             println("Gesture ended at: \(point)")
             
             if velocity.x > 0 {
-                contracting = true
-            } else {
-                contracting = false
-            }
-            if contracting {
                 animateContractTimeline()
             } else {
                 animateExpandTimeline()
