@@ -12,6 +12,16 @@ class ProfileViewController: UIViewController, UITableViewDataSource, UITableVie
     var tweets: [Tweet]!
     var repliedFromTimeline = false
     var user: User?
+    
+    
+    
+    @IBOutlet weak var userHeaderImage: UIImageView!
+    @IBOutlet weak var userAvatarImage: UIImageView!
+    @IBOutlet weak var userUsername: UILabel!
+    @IBOutlet weak var userDisplayName: UILabel!
+    @IBOutlet weak var tweetCount: UILabel!
+    @IBOutlet weak var followingCount: UILabel!
+    @IBOutlet weak var followersCount: UILabel!
 
     
     @IBOutlet weak var tableView: UITableView!
@@ -24,9 +34,35 @@ class ProfileViewController: UIViewController, UITableViewDataSource, UITableVie
         tableView.rowHeight = UITableViewAutomaticDimension
         tableView.estimatedRowHeight = 120
         
+        setupProfile()
         refresh(self)
 
         // Do any additional setup after loading the view.
+    }
+    
+    func setupProfile() {
+        var profileImageUrl = NSURL(string: user!.profileImageUrl!)
+        var headerImageUrl = NSURL(string: "\(user!.bannerImageUrl!)/300x100")
+        
+        userUsername.text = "@\(user?.screenname as String!)"
+        userDisplayName.text = user?.name
+        userAvatarImage.setImageWithURL(profileImageUrl)
+        userHeaderImage.setImageWithURL(headerImageUrl)
+        
+        if let tweetCountInt = user?.tweetCount {
+            tweetCount.text = String(stringInterpolationSegment: tweetCountInt)
+        }
+        if let followersCountInt = user?.followerCount {
+            followersCount.text = String(stringInterpolationSegment: followersCountInt)
+        }
+        if let followingCountInt = user?.followingCount {
+            followingCount.text = String(stringInterpolationSegment: followingCountInt)
+        }
+        
+        userAvatarImage.layer.borderColor = UIColor.whiteColor().CGColor
+        userAvatarImage.layer.borderWidth = 2.0
+        userAvatarImage.layer.cornerRadius = 5.0
+        userAvatarImage.clipsToBounds = true
     }
 
     override func didReceiveMemoryWarning() {
