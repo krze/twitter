@@ -11,7 +11,7 @@ import UIKit
 class ProfileViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, TweetCellDelegate  {
     var tweets: [Tweet]!
     var repliedFromTimeline = false
-    var userID: String?
+    var user: User?
 
     
     @IBOutlet weak var tableView: UITableView!
@@ -84,7 +84,7 @@ class ProfileViewController: UIViewController, UITableViewDataSource, UITableVie
     }
     
     func refresh(sender:AnyObject) {
-        var id = userID as String!
+        var id = user?.id as String!
         
         TwitterClient.sharedInstance.userTimelineWithParams(["user_id": id], completion: { (tweets, error) -> () in
             self.tweets = tweets

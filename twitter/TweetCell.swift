@@ -10,7 +10,7 @@ import UIKit
 
 @objc protocol TweetCellDelegate {
     optional func replyTo(cell: UITableViewCell)
-    optional func viewProfileId(id: String)
+    optional func viewProfile(user: User)
 }
 
 class TweetCell: UITableViewCell {
@@ -25,7 +25,8 @@ class TweetCell: UITableViewCell {
     @IBOutlet weak var retweetImage: UIImageView!
     
     var delegate: TweetCellDelegate?
-    var tweetUserId: String?
+    
+    var tweetUser: User?
 
     var tweet: Tweet! {
         didSet {
@@ -36,7 +37,7 @@ class TweetCell: UITableViewCell {
             displayNameLabel.text = tweet.user?.name
             tweetBodyLabel.text = tweet.text
             timeAgoLabel.text = tweet.timeSinceString
-            tweetUserId = tweet.user!.id
+            tweetUser = tweet.user!
         }
     }
     
@@ -108,7 +109,7 @@ class TweetCell: UITableViewCell {
     func viewProfile() {
         println("Tapped on profile!!!")
         if let delegate = self.delegate {
-            delegate.viewProfileId!(tweetUserId!)
+            delegate.viewProfile!(tweetUser!)
         }
     }
 
